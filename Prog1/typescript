@@ -1,0 +1,850 @@
+Script started on Fri 18 Sep 2020 10:28:53 PM EDT
+]0;reynolds@cobra:~/C++/Prog1[?1034h[reynolds@cobra Prog1]$ cat MoveFront.cpp
+#include<iostream>
+using namespace std;
+#include "dlist.h"
+#include "stdlib.h"
+
+void PrintMenu(char sel); //done
+void HeadInsert (DList<int>& list); //done
+void TailInsert (DList<int>& list); //done
+void AccessItem (DList<int>& list); //done
+void Delete (DList<int>& list); // done
+void PrintList (const DList<int>& list); //done
+void PrintLength (const DList<int>& list); //done
+void makeEmpty( DList<int>& list); // Done
+
+
+int main()
+{
+  DList<int> list;
+  char sel;
+  do
+  {
+  
+    PrintMenu (sel);
+    cin >> sel;
+    switch (toupper(sel))
+    {
+    
+    case 'H' : HeadInsert(list); break;
+    case 'T' : TailInsert(list); break;
+    case 'A' : AccessItem(list); break;
+    case 'D' : Delete(list); break;
+    case 'P' : PrintList(list); break;
+    case 'L' : PrintLength(list); break;
+    case 'E' : makeEmpty(list); break; // Here's an Easter Egg not in my menu
+    case 'Q' : cout << "\tExiting Program...\n"; break;
+    default : cout << "\tError. Try Again." << endl;
+    
+    }
+    
+  } while(toupper(sel) != 'Q');
+  
+  
+}
+
+void PrintMenu(char sel)
+{
+  cout<<"|----------------------------|"<<endl;
+  cout<<"|------------Menu------------|"<<endl;
+  cout<<"|----------------------------|"<<endl;
+  cout<<"|                            |"<<endl;
+  cout<<"| H: Insert item at front    |"<<endl;
+  cout<<"| T: Insert item at back     |"<<endl;
+  cout<<"| A: Access an item in list  |"<<endl;
+  cout<<"| D: Delete an item in list  |"<<endl;
+  cout<<"| P: Print the list          |"<<endl;
+  cout<<"| L: Print the list's length |"<<endl;
+  cout<<"| Q: Quit the program        |"<<endl;
+  cout<<"|                            |"<<endl;
+  cout<<"|----------------------------|"<<endl;
+  cout<<"|                            |"<<endl;
+  cout<<"|  Please enter your choice: |"<<endl;
+}
+
+void HeadInsert (DList<int>& list)
+{
+  int item;
+  cout << "\v\tItem to be Inserted Onto Head of List : ";
+
+  cin >> item;
+  if (! list.inList(item))
+      list.insertHead(item);
+  else
+      cout << "\t Item Already Exists in List. No Duplicates Allowed." << endl;
+  
+}
+
+void TailInsert (DList<int>& list)
+{
+  int item;
+  cout << "\v\tItem to be Inserted Onto Tail of List : ";
+  cin >> item;
+  if (! list.inList(item))
+  {
+      list.appendTail(item);
+  }
+  else
+      cout << "\t Item Already Exists in List. No Duplicates Allowed." << endl;
+}
+
+void AccessItem (DList<int>& list)
+{
+  int item;
+  cout << "\v\tWhat item do you want to access? : ";
+  cin >> item;
+  if ( list.inList(item))
+  {
+      list.deleteItem(item);
+      list.insertHead(item);
+  }
+  else
+      cout << "The Item is not in the List." << endl;
+}
+
+void Delete (DList<int>& list)
+{
+  int item;
+  cout << "\v\tItem to be Deleted From The List : ";
+  cin >> item;
+  if ( list.inList(item))
+  {
+      list.deleteItem(item);
+  }
+  else
+      cout << "\t Item Does Not Exist In The List." << endl;
+  
+
+}
+
+void PrintList ( const DList<int>& list)
+{
+  cout << "Printing List..." << endl;
+  list.print();
+}
+
+void PrintLength (const DList<int>& list)
+{
+  int length;
+  length = list.lengthIs();
+  cout << " The Length of the list is " << length << endl;
+  list.lengthIs();
+}
+
+void makeEmpty(DList<int>& list)
+{
+  list.makeEmpty();
+}
+
+
+
+
+]0;reynolds@cobra:~/C++/Prog1[reynolds@cobra Prog1]$ cat dlist.h
+
+using namespace std;
+
+template <class ItemType>
+struct NodeType;
+
+template <class ItemType>
+class DList 
+{
+public :
+    DList ();		// Constructor
+    ~DList   ();  	// Destructor	
+
+    // Public Operations
+    void makeEmpty (); 
+    void deleteItem (ItemType item);
+    bool inList (ItemType item) const;	
+    bool isEmpty () const;  
+    void print() const; 
+    void insertHead (ItemType item); 
+    void appendTail (ItemType item); 
+    int lengthIs() const;
+
+private :
+    // Private Attributes of a DList Object 
+    NodeType<ItemType>* head;
+    int length;
+
+    // Functions Called Solely By Public Functions, Not The Client 
+    NodeType<ItemType>* location(ItemType item) const;
+    NodeType<ItemType>* last() const; 
+    void deleteLocation (NodeType<ItemType>* delPtr);
+};
+
+#include "dlist.cpp"
+]0;reynolds@cobra:~/C++/Prog1[reynolds@cobra Prog1]$ cat dlist.cpp
+#include <cstddef> 
+#include <iostream>
+
+using namespace std;
+
+template<class ItemType>
+struct NodeType
+{
+	ItemType info;
+	NodeType<ItemType>*	next;
+	NodeType<ItemType>*	back;
+};
+
+template <class ItemType>		
+DList<ItemType>::DList()		// Class constructor
+{
+    length = 0;
+    head = NULL;
+}
+
+template <class ItemType>
+DList<ItemType>::~DList   ()		
+{
+	// Post: List is empty; All items have been deallocated.
+
+}
+
+template <class ItemType>
+void DList<ItemType>::makeEmpty()
+{
+    // Post: List is empty; all items have been deallocated.
+
+  
+  
+  delete head;
+  length = 0;
+  head = NULL;
+}
+
+template <class ItemType>
+void DList<ItemType>::deleteItem (ItemType item)	
+{
+	//  Pre :  item to be deleted is passed in via parameter 
+        // Post :  item is deleted if it exists in list 
+  NodeType<ItemType>* deleteNode = new NodeType<ItemType>;
+  deleteNode = location(item);
+  deleteLocation(deleteNode);
+
+
+}
+
+template <class ItemType>
+bool DList<ItemType>::inList (ItemType item) const
+{
+	//  Pre :  item to be located is passed in via parameter 
+        // Post :  function returns bool value if item is found 
+  NodeType<ItemType>* find = head;
+  
+ 
+ while(find!= NULL)
+ {
+   if(find->info == item)
+   {
+     return true;
+   }
+   else
+   {
+     find = find -> next;
+   }
+ }
+  return false;
+   
+}
+
+template <class ItemType>
+bool DList<ItemType>::isEmpty() const		
+{
+	// Post : function returns true if list is empty, false otherwise
+  if(head == NULL )
+  {
+    return true;
+  }
+  
+  else
+  {
+    return false;
+  }
+	
+}
+
+template <class ItemType>
+void DList<ItemType>::print() const	
+{
+	// Pre  : List is not empty 
+	// Post : Items in List have been printed to screen
+ 
+ int tempCount = 1;
+ NodeType<ItemType>* curr = head;
+ 
+ while(curr != NULL)
+ {
+   cout << tempCount << ". " << curr -> info << endl;
+   curr = curr -> next;
+   tempCount++;
+ }
+
+
+}
+	
+template <class ItemType>
+void DList<ItemType>::insertHead(ItemType item)	
+{
+	//  Pre : item to be inserted is passed in via parameter
+        // Post : item is inserted at head of list;  Former first node is 
+        //        linked back to this new one via double link;
+        //        Length incremented;  Special case handled if list is empty 
+        
+  NodeType<ItemType>* newNode = new NodeType<ItemType>;
+  newNode -> info = item;
+  newNode -> back = NULL;
+
+  if (head != NULL)  
+  {
+    head -> back = newNode;
+
+    newNode-> next = head;
+
+  }
+  else
+  {
+  
+  newNode->next = NULL;
+  
+  }
+
+  head = newNode;
+  length++;
+
+	
+}
+
+template <class ItemType>
+void DList<ItemType>::appendTail(ItemType item)
+{
+	//  Pre :  item to be inserted is passed in via parameter
+        // Post :  item is added to tail of list; Former last node
+        //         is linked to this new one via double link 
+  NodeType<ItemType>* tailNode = new NodeType<ItemType>;
+  tailNode -> info = item;
+  
+  if(head != NULL)
+  {
+    tailNode -> back = last();
+  }
+  if(tailNode -> back != NULL)          
+  {
+    tailNode -> back -> next = tailNode;
+  } 
+  if(head == NULL)
+  {
+    tailNode -> back = NULL;
+    head = tailNode;
+  }
+ 
+  length++;
+  
+}
+
+template <class ItemType>
+int DList<ItemType>::lengthIs() const	
+{
+	// Post : Function returns current length of list  
+   return length;
+   
+   
+}
+
+template <class ItemType>
+NodeType<ItemType>* DList<ItemType>::location(ItemType item) const	//needed for access item
+{
+	//  Pre : item to be located is passed in via parameter 
+        // Post : function returns address of item being searched for --
+        //        if not found, NULL is returned  
+        NodeType<ItemType>* tempNode = head;
+        
+        while(tempNode != NULL )
+        {
+          if ( tempNode -> info == item )
+          {
+            return tempNode;
+          }
+          else
+          {
+            tempNode = tempNode -> next;
+          }
+        }
+        return NULL;
+	
+}
+
+template <class ItemType>
+NodeType<ItemType>* DList<ItemType>::last() const	 // needed for appendTail
+{
+	// Post : Function returns location of current last item in list
+  
+  NodeType<ItemType>* lastNode = head;
+  
+  while(lastNode -> next != NULL)
+  {
+    lastNode = lastNode -> next;
+  }
+  
+  return lastNode;
+	
+}
+
+template <class ItemType>
+void DList<ItemType>::deleteLocation (NodeType<ItemType>* delPtr)	// Inlist used with, Needed for deleteItem
+{
+
+	//  Pre : Item to be deleted exits in list and its location
+        //        is passed in via parameter
+                   
+	// Post : Location passed in is removed from list;  Length
+        //        is decremented, and location is deallocated 
+
+        // Special Cases Handled for Deleting Only One Item in List,
+        // The Head Item of List, and the Tail Item of List
+  if((delPtr -> next == NULL ) && ( delPtr -> back == NULL))
+  {
+    head == NULL;
+  }        
+  else if(delPtr -> next == NULL)
+  {
+    delPtr -> back -> next = NULL;
+  }  
+  else if(delPtr -> back == NULL)
+  {
+    delPtr -> next -> back = NULL;
+    head = delPtr -> next;
+  } 
+  else
+  {
+    delPtr -> next -> back = delPtr -> back;
+    delPtr -> back -> next = delPtr -> next;
+  }
+  
+  delete delPtr;
+  length--;
+
+
+}
+]0;reynolds@cobra:~/C++/Prog1[reynolds@cobra Prog1]$ cat dlist.cpp[2PhMoveFront.cpp[10P./a.outc++ MoveFront.cpp
+]0;reynolds@cobra:~/C++/Prog1[reynolds@cobra Prog1]$ ./a.out
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+h
+	Item to be Inserted Onto Head of List : 42
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+h
+	Item to be Inserted Onto Head of List : 56
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+h
+	Item to be Inserted Onto Head of List : 32
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 32
+2. 56
+3. 42
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+t
+	Item to be Inserted Onto Tail of List : 12
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+t
+	Item to be Inserted Onto Tail of List : 87
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+t
+	Item to be Inserted Onto Tail of List : 90
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 32
+2. 56
+3. 42
+4. 12
+5. 87
+6. 90
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+a
+	What item do you want to access? : 90
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 90
+2. 32
+3. 56
+4. 42
+5. 12
+6. 87
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+a
+	What item do you want to access? : 42
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 42
+2. 90
+3. 32
+4. 56
+5. 12
+6. 87
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+a
+	What item do you want to access? : 32
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 32
+2. 42
+3. 90
+4. 56
+5. 12
+6. 87
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+d
+	Item to be Deleted From The List : 12
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 32
+2. 42
+3. 90
+4. 56
+5. 87
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+d
+	Item to be Deleted From The List : 56
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 32
+2. 42
+3. 90
+4. 87
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+d
+	Item to be Deleted From The List : 32
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+p
+Printing List...
+1. 42
+2. 90
+3. 87
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+l
+ The Length of the list is 3
+|----------------------------|
+|------------Menu------------|
+|----------------------------|
+|                            |
+| H: Insert item at front    |
+| T: Insert item at back     |
+| A: Access an item in list  |
+| D: Delete an item in list  |
+| P: Print the list          |
+| L: Print the list's length |
+| Q: Quit the program        |
+|                            |
+|----------------------------|
+|                            |
+|  Please enter your choice: |
+q
+	Exiting Program...
+]0;reynolds@cobra:~/C++/Prog1[reynolds@cobra Prog1]$ exit
+exit
+
+Script done on Fri 18 Sep 2020 10:38:09 PM EDT

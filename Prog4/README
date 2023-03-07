@@ -1,0 +1,52 @@
+The Dijkstra's Algorithm Project requires that all of us use the graph and queue classes provided in a client file
+in order to create a graph of our own which will then be acted upon by Dijkstra's algorithm.
+By doing this, the shortest paths through all points will be found and added up through data input through a file.
+The graph will need to be a directed ( has direction ) which stores vertices from an input file.
+The listing from the file will be printed out to the user in alphabetical order.
+A summary table will be printed after Dijkstra's is executed on the client file data.
+The client algorithm will go as follows.
+Valid command line file input will be checked.
+File Existence will also be checked.
+Once both of those are confirmed, a graph will be built from the data contained within a file of the user's choice.
+A temporary vector full of edges will be created to be placed upon the graph once checks have been made.
+Duplicate checks are to be enacted upon the starting position vertex as well as the destination vertex to ensure
+two of the same vertices are not printed out in the table or considered later in the data.
+The first vertex is manually created to ensure it is found later,as there will be issue without said creation.
+The vertices which are not edges are added to the graph, followed by the vertices determined to be edges.
+After the graph is created, The user is prompted to pick a starting vertex.
+This vertex is checked for existence.
+The vertex of the starting mark is determined and is marked with it's distance set to zero.
+It's position in the table is then printed out.
+Adjacent vertices to this starting vertex are determined.
+Their weights are determined and set as needed based on the current vertex's weight.
+The minimum distance to each unmarked vertex which is able to be accessed and the lowest once is set to the new current vertex and has a mark placed on it.
+It's data is then printed out as a continuation of the table started by the first vertex.
+All of these steps continue happening again and again until all vertices have been marked and the user is left with a resultant table.
+The Graph class is an interesting class in particular due to all of its built in operations.
+It has a constructor which lets graphs have a minimum of zero vertices and a maximum of 50 vertices with a method which can clears the marks as a precaution on a newly built graph
+IsFull determines whether the maximum vertices has been reached when called.
+IsEmpty determines if the graph has the minimum number of vertices.
+ClearMarks makes every vertex which has a mark on it become unmarked, effectively resetting the graph
+MarkVertex finds a vertex within a graph if it exists, and marks it by turning a boolean variable from false to true
+IsMarked finds a vertex within a graph if it exists, and returns a boolean saying whether this vertex has been visisted before or not
+AddVertex allocates a spot for a new vertex within a graph
+IndexIs looks to see if a certain vertex exists within a graph and returns its position 
+AddEdge allocates a spot for a new edge within a graph, which is different from a vertex as an edge is on the fringe of a graph
+WeightIs takes in two vertices and returns the distance between those two vertices.
+GetToVertices takes in a vertex and queue and enqueues vertices from an index to another index
+Graphs are built using one of three things.
+Either an adjacency matrix, adjancency list, or edge list.
+The one we use is built using an 2D adjacency matrix.
+This means we can quickly ( O(1) ) find out whether two points in a graph are connected or not.
+If there's a direct edge between two points, that would make them adjacent in this structure.
+However, this structure takes up a lot more memory compared to the other structures due to it's complexity of structure. 2D > 1D
+The less nodes in this matrix, the better.
+Before Dijkstra's
+V1;V2;7
+V2;V3;8
+After Dijkstra's
+Vertex                Distance                Previous
+
+ V1                       0                     N/A
+ V2                       7                      V1
+ V3                      15                      V2

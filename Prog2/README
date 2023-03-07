@@ -1,0 +1,28 @@
+Everett Reynolds
+
+Essentially infix to postfix is a process which has a lot of steps.
+First you would need to put a ( onto a stack which you had made locally.
+You would also need output all operands until you reach a close bracket.
+Then you would look at the operators on the stack, using a premade class which assigns these symbols values after
+there is a check made to see if an operator is on top of the stack.
+If there is, you would need to pop and output all operators of equal or higher presidence
+After that, you would push your operator on.
+If you find a ), you would pop all stack symbols until you find a ( in the stack.
+Then you would pop the (.
+That would be the end of input so you would then pop whatever remains.
+InsertOperand essentially creates a new Binary Node allocating memory for it as well.
+Then, it would said the BETPtr to OPERAND using the union structure.
+Then, it would said the Pointer to have a passed in value.
+It would make the pointers right and left attributes null and push the pointer onto a implementation stack.
+InsertPostFixOperator essentially creates a new Binary Node allocating memory for it as well.
+Then, it would said the BETPtr to OPERATOR using the union structure.
+Then, it would set the Pointer to have a passed in value.
+It would make the pointers right value equal to the first value on the stack, pop it and make the pointer's
+left value equal to the second value on the stack, popping it right after.
+The pointer would be pushed onto the stack, and the root of the pointer would equal the new BinaryNode.
+InsertPreFixOperator essentially creates a new Binary Node allocating memory for it as well.
+Then, it would said the BETPtr to OPERATOR using the union structure.
+Then, it would set the Pointer to have a passed in value.
+It would make the pointers left value equal to the first value on the stack, pop it and make the pointer's
+right value equal to the second value on the stack, popping it right after.
+The pointer would be pushed onto the stack, and the root of the pointer would equal the new BinaryNode.

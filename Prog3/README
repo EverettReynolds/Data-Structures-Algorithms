@@ -1,0 +1,31 @@
+Project 3 deals with the process of zipping and unzipping files which is a process known as compression. 
+The method to compress uses what's known as the Huffman algorithm in order to achieve this, which is in a subset of algorithms called greedy algorithms.
+As a result, a Huffman tree is produced through the use of the Huffman algorithm as well.
+Within the actual zip file after compression, you would a get a result which may look confusing at first, but is not so once you understand what the numbers are.
+The lines minus the very last one are all seperated into two columns within the zip file.
+All of the numbers present are either ASCII values or binary numbers within the file.
+The left column contains the ASCII values of all the characters present within the file which is compressed. They are sorted in numerical ascending order from 0-127.
+The right column contains the binary values of the characters that are present within the compressed file. All of binary values can be equated to the ASCII values on the left using typical binary addition.
+The bottom line contains the entire binary encoding of the characters "Mercer Tennis " within a single line, which is the result of compressing the original file.
+There is also an encoding table option including within the Huffman Tree Algorithm which is needed for compression to properly happen.
+The encoding table contains 5 columns with the following titles from left to right. Index, Char, Weight, Parent, and ChildType.
+The Index column simply describes where within the heirarchy systen of ASCII codes the specific char in the next column is. If something ( like a created node ) does not have an ASCII value, it is added in order of creation in the next slot after the last value.
+The Char column simply contains the char found within the uncompressed phrase. It is ordered according to ASCII value in ascending order based on value. Created nodes are also in this column, added as they come into existence.
+The Weight column contains the amount of any certain character which is contained within the original uncompressed phrase. With created nodes, the values of every node below it are added together and are how it's weight is determined.
+The Parent column contains the index position of the node which is above the current node within the Huffman Tree. The root defaults to a parent of zero since it has no parent.
+The ChildType column contains the result of whether a left or right branch is coming into the node from it's parent. the value of zero represents a left node going from the parent node of the current node to the current node.
+A value of one represents a right node going from the parent node of the current node to the current node. This is how you get the actual encoding table using the Huffman algorithm and Huffman Tree.
+The greedy Huffman algorithm works in a relatively simple way to create Huffman trees of nodes.
+First, frequencies of each character are found within the file that is being compressed.
+Then, a forest for each of the frequencies and characters are created.
+Next, The two smallest frequences are found and merged together by the use of a new created node with the combined frequency of both smaller nodes.
+This node is placed back into the lineup with the rest of the frequencies.
+The addition of the smallest frequencies will continue until there is only one single node left with the combined value of all frequencies and a tree has been formed with the frequencies.
+The next step is to label all left links with a value of zero and all right links with a value of 1.
+The next step is to create an encoding table like the one dissected for Mercer Tennis.
+You are able to figure out how many bits each character takes up through this table.
+The huffman class is set up using a struct HNode that contains char ch , int weight, int parent ,and int childType. 
+It has both public and private methods. 
+The methods are all already laid out in front of us, so we know exactly what we need to do within the project.
+For example, getCode and getFrequency both have public and private method headers, and therefore we know recursion will be used with these methods, where other methods won't use recursion.
+Comments are also given to us to explain the premise of exactly what these methods need us to do within their bodies.
